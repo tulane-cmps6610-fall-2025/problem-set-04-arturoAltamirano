@@ -3,13 +3,10 @@
 
 **Name:** Arturo Altamirano
 
-
 Place all written answers from `problemset-04.md` here for easier grading.
 
-
-
-
 - **1d.**
+
 see main.py for the code to generate this:
 
 | file         |   fixed cost |   huffman cost |   ratio |
@@ -20,13 +17,19 @@ see main.py for the code to generate this:
 | fields.c     |    78050.000 |      56206.000 |   0.720 |
 | grammar.lsp  |    26047.000 |      17356.000 |   0.666 |
 
-
+Seems Huffman Coding incurs only 60-70% of the cost compared to fixed encoding.
 
 - **1d.**
-I created 5 of my own files to test this. 
 
+My presumption would be that Huffman does not improve the performance for this, since there are no frequencies to push to the top. There is simply nothing for the algorithm to do. 
 
+I created a few of my own files to test this, and it upheld this presumption. These files are located in the repository if you wish to view them.
 
+| file               |   fixed cost |   huffman cost |   ratio |
+|--------------------|--------------|----------------|---------|
+| identicalTest1.txt |      216.000 |        216.000 |   1.000 |
+| identicalTest2.txt |     2216.000 |       2216.000 |   1.000 |
+| identicalTest3.txt |      160.000 |        160.000 |   1.000 |
 
 - **2a.**
 

@@ -58,6 +58,8 @@ def get_code(node, prefix="", code={}):
         char = node.data[1]
         code[char] = prefix
 
+    #recursively visit the left and right subtrees, 
+    #appending a 0 or 1 to the encoding in each direction asappropriate.
     else:
         if node.left:
             get_code(node.left, prefix + "0", code)
@@ -93,10 +95,12 @@ def huffman_cost(C, f):
 
 #custom built comparison - reused from HW2
 def print_results(results):
+    print("\n")
     print(tabulate(results,
             headers=['file', 'fixed cost', 'huffman cost', 'ratio'],
             floatfmt=".3f",
             tablefmt="github"))
+    print("\n")
 
 #call the preprovided driving code for a given file
 def result_Generator(file):
@@ -115,3 +119,14 @@ for file in files:
     results.append((file, fixed, huffman, ratio))
 
 print_results(results)
+
+
+identicalResults = []
+identicalFiles = ['identicalTest1.txt', 'identicalTest2.txt', 'identicalTest3.txt']
+
+for file in identicalFiles:
+    fixed, huffman = result_Generator(file)
+    ratio = huffman/fixed
+    identicalResults.append((file, fixed, huffman, ratio))
+
+print_results(identicalResults)
