@@ -30,9 +30,9 @@ fields.c    |                     |                |
 
 - **2a.**
 
-Using the provided hint, I will consider the following array of almost properly ordered elements A from 1 to 18.
+Using the provided hint, I will consider the following array of almost properly ordered elements A from 1 to 11.
 
-Consider the following incomplete arrangement: 
+Consider the following arrangement: 
 
 1 ---> root node 
 
@@ -44,50 +44,8 @@ Consider the following incomplete arrangement:
 
 So our array of elements looks like this: [1, 10, 2, 14, 11, 6, 3, 15, 16, 12, 17, 7, 8, 5, 4]
 
-Instead of digging through the class slides to find the textbook solution, I am willing to lose points on this question to experiment a datastructure idea I have:
 
-Why don't we treat our whole tree as a list of listed lists? Our entire tree is one massive list, and each layer is represented by a list, and all of the child clusters of the prior layers nodes is their own list within this second list. 
 
-I figure if we want linear runtime, why not structure this as a linear problem.
-
-[] ---> our whole tree (first layer of encapsulation)
-
-[[]] ---> our layer (second layer of encapsulation)
-
-[[[]]] ---> our cluster(s) (third layer of encapsulation)
-
-So our above diagram can be represented with: 
-
-[[1], [[[10], [2]]], [[[14, 11], [6, 3]]], 
-
-[[[15, 16], [12, 17], [7, 8], [5, 4]]]]
-
-or, more intuitively: 
-
-[
-    [1], ----> root node
-    
-    [
-        [
-
-        [10], [2], ----> first layer
-
-        ]
-        
-            [
-                [14, 11], [6, 3] ----> second layer
-            
-            ], 
-
-                [
-
-                [15, 16], [12, 17], [7, 8], [5, 4] ----> third layer
-
-                ]
-    ]
-]
-
-For this example, we are looking to complete this structure with 
 
 
 
@@ -182,7 +140,7 @@ span = O(n)
 
 - **4a.**
 
-This can be expressed as the 0-1 Knapsack problem. Since the currency is no longer flexible in it's divisibility. 
+This can be expressed as a maximization/minimization problem. Since the currency is no longer flexible in it's divisibility. 
 
 With the greedy algorithm, we blindly select the maximal value with no attention paid to future consequences. But now there is potential for the maximal choice to end up hurting us by nullifying a potentially better long term choice. 
 
@@ -213,12 +171,16 @@ Essentially, at every timestep (t<sub>k</sub>) there is a value which is optimal
 
 We want to memoize all previously seen values, and want to build from the bottom up since each timestep represents an individual subproblem that we want to continously build upon.
 
+This specification was too complex for me to implement in Standard ML(I like Standard ML because the documentation from CMU is very extensive, but the language is inherently more complex), I will use SPARC instead: 
+
 **SPECIFICATION NEEDED**
 
 
 - **5a.**
 
-Yes, because at each time step there is a solution which is optimal. By viewing the start times as our timesteps, we can 
+Yes, because at each time step there is a solution which is optimal. By viewing the start times as our timesteps, we can form the following recurrence: 
+
+**Recurrence Needed**
 
 
 - **5b.**
@@ -257,4 +219,14 @@ Totally unrelated note: It would be interesting to make this a reinforcement lea
 
 Similair to before, we want to memoize the currently running tasks, and want to build from the bottom up since each timestep represents an individual subproblem that we want to continously build upon.
 
-**SPECIFICATION NEEDED**
+This specification was too complex for me to implement in Standard ML(I like Standard ML because the documentation from CMU is very extensive, but the language is inherently more complex), I will use SPARC instead: 
+
+
+fun sort
+
+let 
+
+    sortedEndTimes = sortByFinish
+
+
+in 
