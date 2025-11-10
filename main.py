@@ -1,5 +1,6 @@
 import math, queue
 from collections import Counter
+from tabulate import tabulate
 
 ####### Problem 1 #######
 
@@ -84,10 +85,33 @@ def huffman_cost(C, f):
     
     return cost
 
-f = get_frequencies('f1.txt')
-print("Fixed-length cost:  %d" % fixed_length_cost(f))
-T = make_huffman_tree(f)
-C = get_code(T)
-print("Huffman cost:  %d" % huffman_cost(C, f))
+#f = get_frequencies('f1.txt')
+#print("Fixed-length cost:  %d" % fixed_length_cost(f))
+#T = make_huffman_tree(f)
+#C = get_code(T)
+#print("Huffman cost:  %d" % huffman_cost(C, f))
 
+#custom built comparison - reused from HW2
+def print_results(results):
+    print(tabulate(results,
+            headers=['file', 'fixed cost', 'huffman cost', 'ratio'],
+            floatfmt=".3f",
+            tablefmt="github"))
 
+#call the preprovided driving code for a given file
+def result_Generator(file):
+    f = get_frequencies(str(file))
+    T = make_huffman_tree(f)
+    C = get_code(T)
+
+    return fixed_length_cost(f), huffman_cost(C, f)
+
+results = []
+files = ['f1.txt', 'asyoulik.txt', 'alice29.txt', 'fields.c', 'grammar.lsp']
+
+for file in files:
+    fixed, huffman = result_Generator(file)
+    ratio = huffman/fixed
+    results.append((file, fixed, huffman, ratio))
+
+print_results(results)

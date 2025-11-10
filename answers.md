@@ -10,20 +10,20 @@ Place all written answers from `problemset-04.md` here for easier grading.
 
 
 - **1d.**
+see main.py for the code to generate this:
 
-File | Fixed-Length Coding | Huffman Coding | Huffman vs. Fixed-Length
-----------------------------------------------------------------------
-f1.txt    |                     |                |
-alice29.txt    |                     |                |
-asyoulik.txt    |                     |                |
-grammar.lsp    |                     |                |
-fields.c    |                     |                |
-
+| file         |   fixed cost |   huffman cost |   ratio |
+|--------------|--------------|----------------|---------|
+| f1.txt       |     1340.000 |        826.000 |   0.616 |
+| asyoulik.txt |   876253.000 |     606448.000 |   0.692 |
+| alice29.txt  |  1039367.000 |     676374.000 |   0.651 |
+| fields.c     |    78050.000 |      56206.000 |   0.720 |
+| grammar.lsp  |    26047.000 |      17356.000 |   0.666 |
 
 
 
 - **1d.**
-
+I created 5 of my own files to test this. 
 
 
 
@@ -43,10 +43,6 @@ Consider the following arrangement:
 15, 16, 12, 17 | 7, 8, 5, 4 ---> fourth level 
 
 So our array of elements looks like this: [1, 10, 2, 14, 11, 6, 3, 15, 16, 12, 17, 7, 8, 5, 4]
-
-
-
-
 
 
 - **2b.**
