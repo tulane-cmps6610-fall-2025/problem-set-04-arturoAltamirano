@@ -87,11 +87,11 @@ Span would be the size of our longest vertex on our tree, so O(log n). This is b
 
 - **3a.**
 
-The currency is setup in this way because you can always scale to a smaller/larger denomination and perfectly fill the entirety of your 'knapsack' with 'interfacing' even values.
+The currency is setup in this way because you can always scale to a smaller/larger denomination and perfectly fill the entirety of your dollars capacity with 'interfacing' even values.
 
 This enables a greedy algorithm to take the biggest denomination until it is no longer possible, then take the next biggest, and then the next biggest after that, until eventually the remaining void is filled perfectly or 'geometrically'. 
 
-For every N dollars we want to fill this 'knapsack' type capacity with coins. Our first coin should be the largest possbile denomination they have, with the condition of being below N.
+For every N dollars we want to fill this dollar capacity with coins. Our first coin should be the largest possbile denomination they have, with the condition of being below N.
 
 The following specification outlines this process:
 
@@ -154,9 +154,11 @@ So, for our base case, the values of 1 or 2 will pass since they are valid posit
 
 Optimal Substructure: At every given timestep, the optimal solution can be considered the solution which fill the largest amount of N without being illegal, since our requirement is to fullfill this requirement with the least amount of coins, we are essentially optimizing a series of subproblems until we find all of our coins.
 
-Essentially, every given greedy choice fullfils the optimal substructure by maximizing the value of the selected coin with respect to N.
+Essentially, every given greedy choice fullfils the optimal substructure by maximizing the value of the selected coin with respect to N. Since this will in turn minimize the amount of coins we need to select, making the choice optimal.
 
-Also, according to the Bellman optimality, the value chosen at all subsequent time states is taken from the prior decisions in older time steps. That is, that given our N value (t) we solve our current state's problem (s) to eventually be left with our coins (T)
+**As a loosely related aside:**
+
+According to the Bellman optimality, the value chosen at all subsequent time states is taken from the prior decisions in older time steps. That is, that given our N value (t) we solve our current state's problem (s) to eventually be left with our coins (T)
 
 This is frequently used to uphold the presence of optimal substrucutre for a given problem, to my understanding.
 
@@ -168,11 +170,11 @@ work = O(log n)
 
 We essentially reduce our search space with every coin selection, cutting our dollars remaining value to be filled in increments. Therefor our work must be logarithmic in proportion to this sizes of our coins values. 
 
-Essentially, however much our coins are worth will enable us to fill our dollar faster or slower.
+However much our coins are worth will enable us to fill our dollar faster or slower.
 
 span = O(n)
 
-We need to check all of our coin values at the very least, even with memoization to store calculations.
+We need to check all of our coin values at the very least.
 
 
 - **4a.**
@@ -252,6 +254,18 @@ fun coinCount (selectedCoins : int list, amount : int, cached : int) =
         val answer = coinCount(v, p);
 
     end
+
+The cache table we build would look like this: 
+
+| file         |   fixed cost |   huffman cost |   ratio |
+|--------------|--------------|----------------|---------|
+| f1.txt       |     1340.000 |        826.000 |   0.616 |
+| asyoulik.txt |   876253.000 |     606448.000 |   0.692 |
+| alice29.txt  |  1039367.000 |     676374.000 |   0.651 |
+| fields.c     |    78050.000 |      56206.000 |   0.720 |
+| grammar.lsp  |    26047.000 |      17356.000 |   0.666 |
+
+**Work and Span**
 
 w = O(n log n)
 
@@ -364,6 +378,18 @@ fun weighted_opt (v : int list, p : int list) =
         val answer = weighted_opt(v, p);
 
     end
+
+The cache table we build would look like this: 
+
+| file         |   fixed cost |   huffman cost |   ratio |
+|--------------|--------------|----------------|---------|
+| f1.txt       |     1340.000 |        826.000 |   0.616 |
+| asyoulik.txt |   876253.000 |     606448.000 |   0.692 |
+| alice29.txt  |  1039367.000 |     676374.000 |   0.651 |
+| fields.c     |    78050.000 |      56206.000 |   0.720 |
+| grammar.lsp  |    26047.000 |      17356.000 |   0.666 |
+
+**Work and Span**
 
 w = O(n log n)
 
