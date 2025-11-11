@@ -50,19 +50,30 @@ Consider the following arrangement:
 So our array of elements looks like this: 
     [1, 2, 5, 3, 11, 9, 12] 
 
-and we want to add the following 8 values to flush out another level: 
-    [8, 99, 101, 32, 6, 10, 13, 14]
-
 When we have an element we need to insert to the heap we must traverse the tree (represented as a list here) to find a slot to insert our value. 
 
 In graph form:
- 1) We would need to traverse likely using BFS, find which value in our first breadth sweep is a valid parent (must be smaller than current value)
+ 1) We would need to traverse likely using DFS, pick a vertex and plunge down, evaluating each node along the way. 
+
+    Lets say we move counter-clockwise when choosing vertices to traverse and are inserting our 8 value.
+
+    We choose the left vertex of our root, evaluating down to the value 3 at the bottom, we are still valid so we append the 8 to be the left child of this node. 
+
+        We now have [1, 2, 5, 3, 11, 9, 12, 8] with 8 being the child of 3
  
- 2) Then move down that vertex(continuing BFS) to the bottom, appending the candidate to the end.
+ 2) If we reach depth, append. If we find a node which invalidates the vertex, back track to the most recent valid node and plunge another way.
+
+    If the value was 13, we would backtrack to 2, and move down the right child of 11, eventually appending to get: 
+
+        [1, 2, 5, 3, 11, 9, 12, _ , 13] with 13 being a child of 11, and a hole at the left child node of 11
 
  3) Continue this process, leveraging the fact that a node's child does not need to be strictly minimal in relation to their value distance. That is to say, that given a node with value 1, a node with value 47 is just as valid as node with value 9 as a child.
 
 Note, if graph balance is desired, you could implement a type of cache to track the depth of your vertices, updating this with the amount of values you append to a given vertex so as to balance the distribution. 
+
+It follows naturally that with either the list format, or the graph DFS approach, we are simply moving across all elements (in the worst case) to find a valid home for our candidate.
+
+DFS has the added advantage of isolating on a particular vertex, in the case we are constructing from scratch, we simply populate our vertices one by one.
 
 
 - **2b.**
@@ -188,11 +199,11 @@ Essentially, at every timestep (t<sub>k</sub>) there is a value which is optimal
 
 - **4c.**
 
-We want to memoize all previously seen calculations and results, and want to build from the bottom up since each timestep represents an individual subproblem that we want to continously build upon.
+We want to memoize all previously seen calculations and results, and want to build from the top down since each timestep represents an individual subproblem that we want to continously build upon.
 
 We may do repeat calculations for this in the form of the sequences of values leading to a given timestep, and would benefit from saving them. 
 
-I like Standard ML because the documentation from CMU on it is very extensive, but the syntax is very difficult, I have specified something using bottom up memoization:
+I like Standard ML because the documentation from CMU on it is very extensive, but the syntax is very difficult, I have specified something using top down with memoization cache:
 
 fun coinCount (selectedCoins : int list, amount : int, cached : int) =
     let
@@ -214,12 +225,12 @@ fun coinCount (selectedCoins : int list, amount : int, cached : int) =
                     else 
                         let
                             #(amt - coin value)
-                            fun try_each [] = len[]
-                              | try_each (c::cs) =
-                                    if c > a then try_each cs
-                                    else Int.min(1 + opt(a - c), try_each cs)
+                            fun try_coin [] = len[]
+                              | try_coin (c::cs) =
+                                    if c > amt then try_each cs
+                                    else Int.min(1 + opt(amt - c), try_coin cs)
 
-                            val result = try_each coins
+                            val result = try_coin coins
                             val arr = Array.update(memo, a, result)
 
                         in
@@ -235,9 +246,11 @@ fun coinCount (selectedCoins : int list, amount : int, cached : int) =
 
     end
 
-**Explanation 1,2,3...**
+**Explain**
 
-**Work and Span**
+w = O(n log n)
+
+s = ?
 
 
 - **5a.**
@@ -302,9 +315,9 @@ Totally unrelated note: It would be interesting to make this a reinforcement lea
 
 - **5c.**
 
-Similair to before, but this time I do not feel memoization is neccesary, since the only thing you could potentially reuse is the runtime to value ratio. Which is a trivial calculation at worst, and adds too much complexity to the solution for what it gains in performance.
+We should memoize again, in the case that our value calculation or time is needed for evaluation by a subsequent timestep, likely in the case of overlapping or identical tasks. We will do this top-down this time, since we must make calculations in an iterative/sequential manner
 
-Also since each timestep has a different set of candidates, it is not feasible to reuse these calculations.
+Reusing my topdown form from the previous problem, but I think either bottom up or top down are technically possible for both of these.
 
 fun weighted_opt (v : int list, p : int list) =
     let
@@ -312,26 +325,33 @@ fun weighted_opt (v : int list, p : int list) =
 
         fun opt i =
             #if our index is not 0, then we need to check our memoization cache
-            if i != 0 then 
-                    else 
-                        let
-                            #OPT(i) = max
-                            val vi = List.nth(v, i-1)
-                            val pi = List.nth(p, i-1)
+            if i != 0 then  
+                    let
+                        val cached = Array.sub(memo, i)
 
-                            #(v(i) - OPT(p(i)))
-                            val include = vi + opt(pi)
+                    in
+                        if cached then cached.result
+                        else
+                            let
+                                #OPT(i) = max
+                                val vi = List.nth(v, i-1)
+                                val pi = List.nth(p, i-1)
 
-                            #OPT(i−1)
-                            val exclude = opt(i-1)
+                                #(v(i) - OPT(p(i)))
+                                val include = vi + opt(pi)
 
-                            val result = Int.max(include, exclude)
-                            Array.update(memo, i, result)
+                                #OPT(i−1)
+                                val exclude = opt(i-1)
+
+                                #compute our result by maximizing our inclusion/exclusion calculation at the given timestep
+                                val result = Int.max(include, exclude)
+                                Array.update(memo, i, result)
 
                         in
                             result
 
                         end
+                    end
 
             #if we're at 0, just return nothing, since no value has been incurred
             else
@@ -341,6 +361,8 @@ fun weighted_opt (v : int list, p : int list) =
 
     end
 
-**Explanation 1,2,3...**
+**Explain**
 
-**Work and Span**
+w = O(n log n)
+
+s = ?

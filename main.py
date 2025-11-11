@@ -62,7 +62,7 @@ def get_code(node, prefix="", code={}):
     #appending a 0 or 1 to the encoding in each direction asappropriate.
     else:
         if node.left:
-            get_code(node.left, prefix + "0", code)
+           get_code(node.left, prefix + "0", code)
 
         if node.right:
             get_code(node.right, prefix + "1", code)
@@ -74,7 +74,7 @@ def fixed_length_cost(f):
     cost = 0.0
 
     for val in f.values():
-        cost += val * math.ceil(math.log2(len(f)))
+        cost += float(val * math.ceil(math.log2(len(f))))
 
     return cost
 
