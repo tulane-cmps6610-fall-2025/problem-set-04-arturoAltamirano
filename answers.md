@@ -21,9 +21,11 @@ Seems Huffman Coding incurs only 60-70% of the cost compared to fixed encoding.
 
 - **1d.**
 
-My presumption would be that Huffman does not improve the performance for this, since there are no frequencies to push to the top. There is simply nothing for the algorithm to do. 
+My presumption would be that Huffman does not improve the performance for this, since there are no frequencies to push to the top. There is simply nothing for the algorithm to do and as such we can expect it to be the same as fixed cost.
 
 I created a few of my own files to test this, and it upheld this presumption. These files are located in the repository if you wish to view them.
+
+see main.py for the code to generate this:
 
 | file               |   fixed cost |   huffman cost |   ratio |
 |--------------------|--------------|----------------|---------|
@@ -35,23 +37,37 @@ I created a few of my own files to test this, and it upheld this presumption. Th
 
 Using the provided hint, I will consider the following array of almost properly ordered elements A from 1 to 11.
 
+Useful to document that the heap property states that the children of any given parent node (and it's children's children) must be smaller (or in this case larger) than their parent. This naturally places the biggest (in this case smallest) node at the root.
+
 Consider the following arrangement: 
 
 1 ---> root node 
 
-10 | 2 ---> second level 
+2 | 5 ---> second level 
 
-14, 11 | 6, 3 ---> third level
+3, 11 | 9, 12 ---> third level
 
-15, 16, 12, 17 | 7, 8, 5, 4 ---> fourth level 
+So our array of elements looks like this: 
+    [1, 2, 5, 3, 11, 9, 12] 
 
-So our array of elements looks like this: [1, 10, 2, 14, 11, 6, 3, 15, 16, 12, 17, 7, 8, 5, 4]
+and we want to add the following 8 values to flush out another level: 
+    [8, 99, 101, 32, 6, 10, 13, 14]
+
+When we have an element we need to insert to the heap we must traverse the tree (represented as a list here) to find a slot to insert our value. 
+
+In graph form:
+ 1) We would need to traverse likely using BFS, find which value in our first breadth sweep is a valid parent (must be smaller than current value)
+ 
+ 2) Then move down that vertex(continuing BFS) to the bottom, appending the candidate to the end.
+
+ 3) Continue this process, leveraging the fact that a node's child does not need to be strictly minimal in relation to their value distance. That is to say, that given a node with value 1, a node with value 47 is just as valid as node with value 9 as a child.
+
+Note, if graph balance is desired, you could implement a type of cache to track the depth of your vertices, updating this with the amount of values you append to a given vertex so as to balance the distribution. 
 
 
 - **2b.**
 
-
-
+Span for BFS would be the width of the tree, for DFS it would be the height. You could say that depending on the approach you choose (both are valid) that you would want to carefully consider the amount of children each node has. 
 
 - **3a.**
 
@@ -133,8 +149,12 @@ Bellman optimality is a central theme in Reinforcement Learning, a class I am en
 - **3c.**
 
 work = O(log n)
+
+**Explain**
+
 span = O(n)
 
+**Explain**
 
 
 - **4a.**
@@ -168,19 +188,85 @@ Essentially, at every timestep (t<sub>k</sub>) there is a value which is optimal
 
 - **4c.**
 
-We want to memoize all previously seen values, and want to build from the bottom up since each timestep represents an individual subproblem that we want to continously build upon.
+We want to memoize all previously seen calculations and results, and want to build from the bottom up since each timestep represents an individual subproblem that we want to continously build upon.
 
-This specification was too complex for me to implement in Standard ML(I like Standard ML because the documentation from CMU is very extensive, but the language is inherently more complex), I will use SPARC instead: 
+We may do repeat calculations for this in the form of the sequences of values leading to a given timestep, and would benefit from saving them. 
 
-**SPECIFICATION NEEDED**
+I like Standard ML because the documentation from CMU on it is very extensive, but the syntax is very difficult, I have specified something using bottom up memoization:
+
+fun coinCount (selectedCoins : int list, amount : int, cached : int) =
+    let
+        val memo = Array.array (amount + 1)
+
+        fun opt amt =
+            #if our index is not 0, then we need to check our memoization cache
+            if amt != 0 then 
+
+                #we want to access our table and see if this problem is in there
+                let
+                    cached = Array.sub(memo, amt) |
+
+                in
+                    #if our current cache index is found, return result member
+                    if cached = cached.result
+
+                    #if not cached, we can cache it for later
+                    else 
+                        let
+                            #(amt - coin value)
+                            fun try_each [] = len[]
+                              | try_each (c::cs) =
+                                    if c > a then try_each cs
+                                    else Int.min(1 + opt(a - c), try_each cs)
+
+                            val result = try_each coins
+                            val arr = Array.update(memo, a, result)
+
+                        in
+                            result
+
+                        end
+
+            #if we're at 0, just return nothing, since no value has been incurred
+            else
+                0
+    in
+        val answer = coinCount(v, p);
+
+    end
+
+**Explanation 1,2,3...**
+
+**Work and Span**
 
 
 - **5a.**
 
 Yes, because at each time step there is a solution which is optimal. By viewing the start times as our timesteps, we can form the following recurrence: 
 
-**Recurrence Needed**
+OPT(i) = max(v(i) + OPT(p(i)),  OPT(i−1))
 
+ 1) OPT in this case indicated the maximum value that we can select for in the first i tasks. 
+
+ 2) max() is used to denote our desire to select the optimal solution at the given timestep, note that this is technically greedy, but our expression within the parenthesis will account for future opportunity.
+
+ 3) v(i) represents the value of the current candidate task 
+
+ 4) OPT(p(i)) represents the opportunity cost of all other candidates not being selected.
+
+ 5) OPT(i−1) is used to indicate the current total rewards acquired.
+
+We can say that for any given series of events, there is potential for overlap that will interfere with us selecting a subsequent ideal value. Therefor if we remove any given selection from our hypothetical ideal series of selections and replaced it with a sub-optimal selection, it would destroy the rest of the sequence. 
+
+Essentially, by defining the problem in this recurrence, we assert that any given task is not only optimal in the local sense when compared to it's other candidates, but on a global level for the whole sequence, since they are all dependent on one another. 
+
+This condition acts as proof for the optimal substrucutre property. Since for any given solution, or even timestep within an incomplete solution, it cannot be optimal without all other prior selections being optimal. 
+
+My reasoning for this was based on the recurrence for the knapsack problem, pertaining to capacity: 
+
+v(OPT(n, Value)) = max{v(task) + v(OPT([n - 1], W - w(n))), v(OPT(n - 1), W)}
+
+Only for this application, there is no more capacity metric, only the time element and the opportunity cost of potentially being stalled on a task.
 
 - **5b.**
 
@@ -216,16 +302,45 @@ Totally unrelated note: It would be interesting to make this a reinforcement lea
 
 - **5c.**
 
-Similair to before, we want to memoize the currently running tasks, and want to build from the bottom up since each timestep represents an individual subproblem that we want to continously build upon.
+Similair to before, but this time I do not feel memoization is neccesary, since the only thing you could potentially reuse is the runtime to value ratio. Which is a trivial calculation at worst, and adds too much complexity to the solution for what it gains in performance.
 
-This specification was too complex for me to implement in Standard ML(I like Standard ML because the documentation from CMU is very extensive, but the language is inherently more complex), I will use SPARC instead: 
+Also since each timestep has a different set of candidates, it is not feasible to reuse these calculations.
 
+fun weighted_opt (v : int list, p : int list) =
+    let
+        val n = len(v)
 
-fun sort
+        fun opt i =
+            #if our index is not 0, then we need to check our memoization cache
+            if i != 0 then 
+                    else 
+                        let
+                            #OPT(i) = max
+                            val vi = List.nth(v, i-1)
+                            val pi = List.nth(p, i-1)
 
-let 
+                            #(v(i) - OPT(p(i)))
+                            val include = vi + opt(pi)
 
-    sortedEndTimes = sortByFinish
+                            #OPT(i−1)
+                            val exclude = opt(i-1)
 
+                            val result = Int.max(include, exclude)
+                            Array.update(memo, i, result)
 
-in 
+                        in
+                            result
+
+                        end
+
+            #if we're at 0, just return nothing, since no value has been incurred
+            else
+                0
+    in
+        val answer = weighted_opt(v, p);
+
+    end
+
+**Explanation 1,2,3...**
+
+**Work and Span**
