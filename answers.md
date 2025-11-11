@@ -39,46 +39,51 @@ Using the provided hint, I will consider the following array of almost properly 
 
 Useful to document that the heap property states that the children of any given parent node (and it's children's children) must be smaller (or in this case larger) than their parent. This naturally places the biggest (in this case smallest) node at the root.
 
-Consider the following arrangement: 
+Consider the following arrangement: [1, 11, 12, 3, 2, 9, 6] 
+
+In order to construct this from scratch, we leverage the fact that we already have our graph in it's implicit form, and can manipulate it to match the heap property. 
+
+We can represent this as the following graph:
 
 1 ---> root node 
 
-2 | 5 ---> second level 
+11 | 12 ---> second level 
+
+3, 2 | 9, 6 ---> third level
+
+We can notice that our second and third level are improper. We can either back track and individually swap the third level nodes with their parent's until we sort our tree properly - incurring n log n cost, or we can implement a simpler approach. 
+
+Instead of swapping 3 to 11, and then 2 to 3, we can instead target the parent and push it downward based on the min of the set of child values.
+
+We use the fact that a nodes children are indexed at double/double +1 of it's own index. Take the minimal of these 2 values, and swap them. 
+
+[1, 11, 12, 3, 2, 9, 6]
+
+**Note we no longer use 0 based indexing**
+
+11 ---> Index 2
+
+2 * 2 and 2 * 2 + 1 = 4/5
+
+3, 2 ---> Index 4/5
+
+We take 2 and swap with 11 to get a properly ordered segment of 2, 3, 11
+
+We continue this process to finish with [1, 2, 6, 3, 11, 9, 12]
+
+1 ---> root node 
+
+2 | 6 ---> second level 
 
 3, 11 | 9, 12 ---> third level
 
-So our array of elements looks like this: 
-    [1, 2, 5, 3, 11, 9, 12] 
+This method only incurs O(n) cost because we essentially traverse the list in a linear iterative manner, and the fact that once we properly order a given element, we know that at least it and it's children are now proper. 
 
-When we have an element we need to insert to the heap we must traverse the tree (represented as a list here) to find a slot to insert our value. 
-
-In graph form:
- 1) We would need to traverse likely using DFS, pick a vertex and plunge down, evaluating each node along the way. 
-
-    Lets say we move counter-clockwise when choosing vertices to traverse and are inserting our 8 value.
-
-    We choose the left vertex of our root, evaluating down to the value 3 at the bottom, we are still valid so we append the 8 to be the left child of this node. 
-
-        We now have [1, 2, 5, 3, 11, 9, 12, 8] with 8 being the child of 3
- 
- 2) If we reach depth, append. If we find a node which invalidates the vertex, back track to the most recent valid node and plunge another way.
-
-    If the value was 13, we would backtrack to 2, and move down the right child of 11, eventually appending to get: 
-
-        [1, 2, 5, 3, 11, 9, 12, _ , 13] with 13 being a child of 11, and a hole at the left child node of 11
-
- 3) Continue this process, leveraging the fact that a node's child does not need to be strictly minimal in relation to their value distance. That is to say, that given a node with value 1, a node with value 47 is just as valid as node with value 9 as a child.
-
-Note, if graph balance is desired, you could implement a type of cache to track the depth of your vertices, updating this with the amount of values you append to a given vertex so as to balance the distribution. 
-
-It follows naturally that with either the list format, or the graph DFS approach, we are simply moving across all elements (in the worst case) to find a valid home for our candidate.
-
-DFS has the added advantage of isolating on a particular vertex, in the case we are constructing from scratch, we simply populate our vertices one by one.
-
+At worst, we would have to traverse the entire list, reordering the entire thing in decreasing increments, even still the saved complexity of pushing down instead of pulling elements up saves us on cost.
 
 - **2b.**
 
-Span for BFS would be the width of the tree, for DFS it would be the height. You could say that depending on the approach you choose (both are valid) that you would want to carefully consider the amount of children each node has. 
+Span would be the size of our longest vertex on our tree, so O(log n). This is because the limiting factor of our algorithm is how far down a node has to be pushed down. 
 
 - **3a.**
 
