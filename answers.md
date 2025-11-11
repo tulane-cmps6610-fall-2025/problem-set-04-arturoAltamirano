@@ -166,11 +166,13 @@ Bellman optimality is a central theme in Reinforcement Learning, a class I am en
 
 work = O(log n)
 
-**Explain**
+We essentially reduce our search space with every coin selection, cutting our dollars remaining value to be filled in increments. Therefor our work must be logarithmic in proportion to this sizes of our coins values. 
+
+Essentially, however much our coins are worth will enable us to fill our dollar faster or slower.
 
 span = O(n)
 
-**Explain**
+We need to check all of our coin values at the very least, even with memoization to store calculations.
 
 
 - **4a.**
@@ -251,12 +253,9 @@ fun coinCount (selectedCoins : int list, amount : int, cached : int) =
 
     end
 
-**Explain**
-
 w = O(n log n)
 
-s = ?
-
+s = Since we're using dynamic programming - and a top down approach, our span is the length of the chosen coins. This can be represented by the incremental filling of the dollar or O(log n)
 
 - **5a.**
 
@@ -366,8 +365,6 @@ fun weighted_opt (v : int list, p : int list) =
 
     end
 
-**Explain**
-
 w = O(n log n)
 
-s = ?
+s = Since we're using dynamic programming - and a top down approach, our span is the length of the chosen coins. This can be represented by the incremental filling of the dollar or O(log n)
