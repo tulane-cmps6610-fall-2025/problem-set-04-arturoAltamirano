@@ -139,7 +139,6 @@ The following psuedo-code specification outlines this process:
 
     return coinsChosen
 
-
     dollarVal = 100
     coins = [1, 2, 4, 8, 16, 32...]
 
@@ -196,8 +195,7 @@ However much our coins are worth will enable us to fill our dollar faster or slo
 
 span = O(n)
 
-We need to check all of our coin values at the very least.
-
+We need to check all of our coin values at the very least, and doing so is the longest dependency. That and the potential for our dollar's value to require all coins potentially.
 
 - **4a.**
 
@@ -277,16 +275,6 @@ fun coinCount (selectedCoins : int list, amount : int, cached : int) =
 
     end
 
-The cache table we build would look like this: 
-
-| file         |   fixed cost |   huffman cost |   ratio |
-|--------------|--------------|----------------|---------|
-| f1.txt       |     1340.000 |        826.000 |   0.616 |
-| asyoulik.txt |   876253.000 |     606448.000 |   0.692 |
-| alice29.txt  |  1039367.000 |     676374.000 |   0.651 |
-| fields.c     |    78050.000 |      56206.000 |   0.720 |
-| grammar.lsp  |    26047.000 |      17356.000 |   0.666 |
-
 **Work and Span**
 
 w = O(n log n)
@@ -351,7 +339,9 @@ We will take a different set of tasks:
 
 Only this time, we can see that the very last task (with massive reward of 50) in the sequence is missed because the prior chosen task runs to the end. Essentially blocking out the remaining potential for greater benefit.
 
-Totally unrelated note: It would be interesting to make this a reinforcement learning problem, with value being reward, and overlapping start times incurring a penalty to encourage our agent to find it's own maximal way of scheduling.
+**Totally unrelated note:** 
+
+It would be interesting to make this a reinforcement learning problem, with value being reward, and overlapping start times incurring a penalty to encourage our agent to find it's own maximal way of scheduling.
 
 - **5c.**
 
@@ -400,16 +390,6 @@ fun weighted_opt (v : int list, p : int list) =
         val answer = weighted_opt(v, p);
 
     end
-
-The cache table we build would look like this: 
-
-| file         |   fixed cost |   huffman cost |   ratio |
-|--------------|--------------|----------------|---------|
-| f1.txt       |     1340.000 |        826.000 |   0.616 |
-| asyoulik.txt |   876253.000 |     606448.000 |   0.692 |
-| alice29.txt  |  1039367.000 |     676374.000 |   0.651 |
-| fields.c     |    78050.000 |      56206.000 |   0.720 |
-| grammar.lsp  |    26047.000 |      17356.000 |   0.666 |
 
 **Work and Span**
 
