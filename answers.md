@@ -280,9 +280,13 @@ fun coinCount (selectedCoins : int list, amount : int, cached : int) =
 
 **Work and Span**
 
-w = O(n log n)
+In the worst case, we may need to traverse the entirety of our coin array. 
 
-s = Since we're using dynamic programming - and a top down approach, our span is the length of the chosen coins. This can be represented by the incremental filling of the dollar or O(log n)
+w = O(n)
+
+Since we're using dynamic programming - and a top down approach, our span is the length of the chosen coins. This can be represented by the incremental filling of the dollar.
+
+s = O(log n)
 
 - **5a.**
 
@@ -406,4 +410,6 @@ When we put them together, we get:
 
 work = O(n log n)
 
-span = Since we're using dynamic programming - and a top down approach, our span is the length of the chosen coins. This can be represented by the incremental filling of the dollar or O(log n)
+Our tasks all incrementally fill the entirety of our time interval (search space) so, like with our coin problem, this would have a maximal dependency of the largest task.
+
+span = O(log n)
