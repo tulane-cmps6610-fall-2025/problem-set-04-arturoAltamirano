@@ -171,6 +171,7 @@ Basic outline assuming sample value of N = 100
     We evaluate if our value has been filled, and stop our process since it has been.
 
 - **3b.**
+
 Greedy Property: Since these values all 'interface' perfectly with each other, there is only one ideal choice at a given state, and this will remain the ideal choice for all subsequent timesteps that derive from it.
 
 For every possible member in the set of [2<sup>0</sup> ... 2<sup>k</sup>] we must have a largest and smaller value to choose from. This is because 2<sup>k</sup> must always be greater than 2<sup>k - 1</sup> and less than 2<sup>k + 1</sup>
@@ -184,6 +185,8 @@ Optimal Substructure: At every given timestep, the optimal solution can be consi
 Essentially, every given greedy choice fullfils the optimal substructure by maximizing the value of the selected coin with respect to N. Since this will in turn minimize the amount of coins we need to select, making the choice optimal.
 
 - **3c.**
+
+**Work and Span**
 
 work = O(log n)
 
