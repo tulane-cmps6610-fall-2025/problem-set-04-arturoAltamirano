@@ -81,6 +81,31 @@ This method only incurs O(n) cost because we essentially traverse the list in a 
 
 At worst, we would have to traverse the entire list, reordering the entire thing in decreasing increments, even still the saved complexity of pushing down instead of pulling elements up saves us on cost.
 
+I will define some pythonic psuedo code below, I am not using SPARC or Standard ML in order to keep this straightforward, but will use it for the more delicate problems later: 
+
+I actually came up with what I feel is a really interesting method, but it is certainly not the textbook solution: 
+
+    graph_nodes = [1, 11, 12, 3, 2, 9, 6] 
+
+    for node in range(len(graph_nodes)): 
+        #store these values for potential swap
+        current_node = graph_nodes[node]
+
+        #remeber 'node' will be an int in accordance with the length of the list
+        left_child = graph_nodes[node * 2]
+        
+        right_child = graph_nodes[(node * 2) + 1]
+
+        if current_node > left_child:
+            #swap the current parent with it's left child
+            graph_nodes[node]  = left_child
+            graph_nodes[node * 2] = current_node
+
+        elif current_node > right_child:
+            #swap the current parent with it's right child
+            graph_nodes[node]  = left_child
+            graph_nodes[node * 2] = current_node
+
 - **2b.**
 
 Span would be the size of our longest vertex on our tree, so O(log n). This is because the limiting factor of our algorithm is how far down a node has to be pushed down. 
@@ -93,35 +118,32 @@ This enables a greedy algorithm to take the biggest denomination until it is no 
 
 For every N dollars we want to fill this dollar capacity with coins. Our first coin should be the largest possbile denomination they have, with the condition of being below N.
 
-The following specification outlines this process:
+The following psuedo-code specification outlines this process:
 
-    #at every recursion we want to check if we've filled the N value
+    def maximalCheck(coin, capacity):
+        if coin >= capacity: 
+            return True
 
-    fun evaluator(0, []) = false
-        evaluator (capacity, coin::rest) =
-        | (coin = capacity) orelse evaluator (capacity - coin, rest);
+        else: 
+            return False
     
-    #this will determine if the next k value is in excess of our limit N 
-    #will be driven from main to determine the max value to greedily select
+    def coinSplit(dollarVal, coins):
+        #we want to always try the biggest coin - sorting now makes this easiest
+        coins.sort()
 
-    fun maximalEvaluator (coin, capacity) = (coin > capacity);
+        for coin in coins: 
+            while maximalCheck(coin, remainingValue) != True && remaining != 0:
+                coinsChosen.append(coin)
+                valueAccrued += int(coin)
+                remainingValue = dollarVal - valueAccrued
 
-    fun coinSplit (N, k, []) = N, []
-        let 
-            fun insert (x, []) = [x]
-               insert (x, y::ys) = 
-               if x > y 
-                    then x::y 
-               else 
-                    y :: insert (x, ys)
-            
-            fun sort [] = []
-                sort(x::xs) = insert (x, sort)
+    return coinsChosen
 
-        in 
-            splitHelper(N, sortedCoins, [])
 
-        end;
+    dollarVal = 100
+    coins = [1, 2, 4, 8, 16, 32...]
+
+    coinsChosen = coinSplit(dollarVal, coins)
 
 Basic outline assuming sample value of N = 100
 
