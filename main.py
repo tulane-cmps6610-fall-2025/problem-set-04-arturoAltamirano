@@ -47,7 +47,6 @@ def make_huffman_tree(f):
         #insert z into the priority queue (using an empty character "")
         p.put(z)
 
-        
     # return root of the tree
     return p.get()
 
@@ -105,6 +104,7 @@ def print_results(results):
 #call the preprovided driving code for a given file
 def result_Generator(file):
     f = get_frequencies(str(file))
+    #print(f'{str(file)} alphabet: {f}')
     T = make_huffman_tree(f)
     C = get_code(T)
 
@@ -122,7 +122,7 @@ print_results(results)
 
 
 identicalResults = []
-identicalFiles = ['identicalTest1.txt', 'identicalTest2.txt', 'identicalTest3.txt']
+identicalFiles = ['identicalTest1.txt', 'identicalTest2.txt', 'identicalTest3.txt', 'identicalTest4.txt', 'identicalTest5.txt']
 
 for file in identicalFiles:
     fixed, huffman = result_Generator(file)

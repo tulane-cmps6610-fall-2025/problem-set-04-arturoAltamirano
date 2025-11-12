@@ -21,9 +21,13 @@ Seems Huffman Coding incurs only 60-70% of the cost compared to fixed encoding.
 
 - **1d.**
 
-My presumption would be that Huffman does not improve the performance for this, since there are no frequencies to push to the top. There is simply nothing for the algorithm to do and as such we can expect it to be the same as fixed cost.
+My presumption would be that Huffman does not improve the performance for this, since there are no frequencies to shorten the representations of/push to the top. There is simply nothing for the algorithm to do and as such we can expect it to be the same as fixed cost.
 
-I created a few of my own files to test this, and it upheld this presumption. These files are located in the repository if you wish to view them.
+I created a few of my own files to test this, and it upheld this presumption **for the most part**. These files are located in the repository if you wish to view them.
+
+When the alphabet is an odd value, it seems to produce slightly better results. I am not sure why this is, I believe it is because the fixed length encodings waste a lot of space with their bit representations. 
+
+Where as huffman uses the synthetic nodes to make the most of all binary representations in the odd case where we need an extra bit that gets wasted otherwise. 
 
 see main.py for the code to generate this:
 
@@ -32,6 +36,8 @@ see main.py for the code to generate this:
 | identicalTest1.txt |      216.000 |        216.000 |   1.000 |
 | identicalTest2.txt |     2216.000 |       2216.000 |   1.000 |
 | identicalTest3.txt |      160.000 |        160.000 |   1.000 |
+| identicalTest4.txt |     6375.000 |       5100.000 |   0.800 |
+| identicalTest5.txt |      195.000 |        156.000 |   0.800 |
 
 - **2a.**
 
@@ -177,25 +183,15 @@ Optimal Substructure: At every given timestep, the optimal solution can be consi
 
 Essentially, every given greedy choice fullfils the optimal substructure by maximizing the value of the selected coin with respect to N. Since this will in turn minimize the amount of coins we need to select, making the choice optimal.
 
-**As a loosely related aside:**
-
-According to the Bellman optimality, the value chosen at all subsequent time states is taken from the prior decisions in older time steps. That is, that given our N value (t) we solve our current state's problem (s) to eventually be left with our coins (T)
-
-This is frequently used to uphold the presence of optimal substrucutre for a given problem, to my understanding.
-
-Bellman optimality is a central theme in Reinforcement Learning, a class I am enrolled in this semester.
-
 - **3c.**
 
 work = O(log n)
 
+span = O(log n)
+
 We essentially reduce our search space with every coin selection, cutting our dollars remaining value to be filled in increments. Therefor our work must be logarithmic in proportion to this sizes of our coins values. 
 
 However much our coins are worth will enable us to fill our dollar faster or slower.
-
-span = O(n)
-
-We need to check all of our coin values at the very least, and doing so is the longest dependency. That and the potential for our dollar's value to require all coins potentially.
 
 - **4a.**
 
@@ -225,12 +221,19 @@ We determine we can either take the 10 cent coin, or the 1 cent coin. We do not 
 
 Essentially, at every timestep (t<sub>k</sub>) there is a value which is optimal with respect to our criterion, and our overall solution is nothing but a collection of timesteps and their respective valid solution sets, and the choices we make within them. 
 
+We can deduce that our problem is merely a collection of subproblems, each with their own optimal solution, which themselves build into an overall optimal solution.
 
 - **4c.**
 
 We want to memoize all previously seen calculations and results, and want to build from the top down since each timestep represents an individual subproblem that we want to continously build upon.
 
 We may do repeat calculations for this in the form of the sequences of values leading to a given timestep, and would benefit from saving them. 
+
+We want to use the current value, as well as the current possibilites to make an educated decision on the minimal amount of coins we can select to fulfill our needs. 
+
+We have stored the calculations, and can reuse these to form all possible permutations of our value additions. 
+
+This will only be useful for large denominations and dollar values, where we need to fill a massive value with many denominations that we see frequently.
 
 I like Standard ML because the documentation from CMU on it is very extensive, but the syntax is very difficult, I have specified something using top down with memoization cache:
 
@@ -322,7 +325,7 @@ There is also the issue of what are greedy criterion is, is it total time taken?
 We will use reward divided by total time as our criterion!
 
 Counterexample 1: 
-    
+            Chosen                  Missed!
     Tasks = (0, 10, 15), (0, 1, 1), (1, 5, 12) ...
 
 Right away we can see that at timestep 0, the greedy criterion will select the task which runs for the entire 10 second period (0, 10, 15) because it has the best per second weighted reward. Assuming that once we schedule a task we are locked into it and cannot interrupt the process, we will be stuck processing while a better task was never even evaluated.
@@ -349,6 +352,8 @@ We should memoize again, in the case that our value calculation or time is neede
 
 Reusing my topdown form from the previous problem, but I think either bottom up or top down are technically possible for both of these.
 
+As pre-requesite I beleive we need to sort our operations by start or finish time, or make the assumption they come this way by default.
+
 fun weighted_opt (v : int list, p : int list) =
     let
         val n = len(v)
@@ -366,6 +371,8 @@ fun weighted_opt (v : int list, p : int list) =
                                 #OPT(i) = max
                                 val vi = List.nth(v, i-1)
                                 val pi = List.nth(p, i-1)
+
+                                #we are essentially assigned inclusion or exclusion to their own prospective paths 
 
                                 #(v(i) - OPT(p(i)))
                                 val include = vi + opt(pi)
@@ -393,6 +400,10 @@ fun weighted_opt (v : int list, p : int list) =
 
 **Work and Span**
 
-w = O(n log n)
+If we do not assume our tasks are sorted by default - and that this is a requirement, we need to first sort and then perform our dynamic approach. The sorting will dominate the dynamic method with O(n) runtime. 
 
-s = Since we're using dynamic programming - and a top down approach, our span is the length of the chosen coins. This can be represented by the incremental filling of the dollar or O(log n)
+When we put them together, we get:
+
+work = O(n log n)
+
+span = Since we're using dynamic programming - and a top down approach, our span is the length of the chosen coins. This can be represented by the incremental filling of the dollar or O(log n)
